@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="ticket">
+    <output-path>$PROJECT_DIR$/../out</output-path>
+    <root id="archive" name="ticket.jar">
+      <element id="module-output" name="Ticket Reservation" />
+    </root>
+  </artifact>
+</component>
