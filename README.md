@@ -1,6 +1,6 @@
 # OIBSIP Internship Projects
 # 1.[Ticket Reservation](https://github.com/James-Kwao/OIBSIP/tree/13bc034364366214a1c382466255053f87661fc8/Ticket%20Reservation)
-# Prerequisites:
+# Task:
 ## Online Reservation System
 This Online Reservation System will include all the necessary fields which are required during
 online reservation system. This Online Reservation System will be easy to use and can be used by
@@ -23,15 +23,16 @@ PNR number and after submitting it, this will display the entire information rel
 particular PNR number. If users want to confirm their cancellation, in this case they have to press
 OK button.
 
+# 2.[ATM Interface](https://github.com/James-Kwao/OIBSIP/tree/0afe16662266e590192f77082f66b9dd0a179bdc/ATM%20Interface)
+# Task:
+We have all come across ATMs in our cities and it is built on Java. This complex project consists of
+five different classes and is a console-based application. When the system starts the user is
+prompted with user id and user pin. On entering the details successfully, then ATM functionalities
+are unlocked. The project allows to perform following operations:
 
-
-
-
-
-
-
-
-ONLINE RESERVATION SYSTEM
-
-
+## Transactions History
+## Withdraw
+## Deposit
+## Transfer
+## Quit
 
