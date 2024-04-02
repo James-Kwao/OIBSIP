@@ -16,13 +16,12 @@ public class DB {
     private PrintWriter fileWriter;
     private BufferedReader fileReader;
     private String firstName, lastName, email, password, username;
-    private String[] data;
     private File file, currentUser, userDetails, bookings;
     private boolean topUser;
 
 
     public DB(String dataBase_name) {
-        rootPath = "E:\\." + dataBase_name;
+        rootPath = "E:\\" + dataBase_name;
         delimiter = "@d#b%";
         firstName = lastName = email = password = username = "Null";
         try {
@@ -89,7 +88,7 @@ public class DB {
             File[] files = file.listFiles();
             if (files != null)
                 for (File f : files) {
-                    data = f.getName().split(delimiter);
+                    String[] data = f.getName().split(delimiter);
                     if (data[0].equals(details) || data[1].equals(details)) {
                         if (f.isDirectory())
                             for (File nf : Objects.requireNonNull(f.listFiles())) {
@@ -301,12 +300,8 @@ public class DB {
         return currentUser;
     }
 
-    public int totalUsers() {
-        return id;
-    }
-
     public boolean isTopUser() {
-        return topUser;
+        return !topUser;
     }
 
     private JTextArea displayPNRInfo(String s) {

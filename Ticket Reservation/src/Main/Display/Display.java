@@ -18,7 +18,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 import java.util.Random;
@@ -101,6 +100,7 @@ public class Display extends JPanel {
         timeToDepart = LocalTime.now().getHour() + ":" + LocalTime.now().getMinute();
         database = new DB("ticketReservation");
         dateTimeInterface = new DateTimeInterface();
+        adminDisplay = new SuperAdminInterface(database);
 
         setLayout(null);
         setBounds(0, 0, getToolkit().getScreenSize().width, getToolkit().getScreenSize().height);
@@ -536,9 +536,12 @@ public class Display extends JPanel {
                                     database.isPassword(String.valueOf(passwordField.getPassword()))) {
                                 passwordClr = emailClr = new Color(0x2FCAA6);
                                 loginNullified();
-                                if (!database.isTopUser()) {
+                                if (database.isTopUser()) {
                                     display = 'R';
-                                } else display = 'T';
+                                } else {
+                                    display = 'T';
+                                    setCursor(Cursor.getDefaultCursor());
+                                }
                             } else {
                                 emailClr = Color.RED;
                                 passwordClr = Color.RED;
@@ -847,20 +850,22 @@ public class Display extends JPanel {
         if (display == 'S') g2.setColor(new Color(0x12A3D2));
         if (display == 'R') g2.setColor(Color.WHITE);
 
-        if (x_pos < g2.getFontMetrics(font.deriveFont(25f)).stringWidth(" Available Trains:") + 5
-                || x_pos > getBounds().width - 860 - train.getWidth(null))
-            animate = -animate;
-        x_pos += animate;
+        if (database.isTopUser()) {
+            if (x_pos < g2.getFontMetrics(font.deriveFont(25f)).stringWidth(" Available Trains:") + 5
+                    || x_pos > getBounds().width - 860 - train.getWidth(null))
+                animate = -animate;
+            x_pos += animate;
 
-        g2.drawImage(train, x_pos, 90 - train.getHeight(null) + 2, null);
-        int num = train.getWidth(null) + 10;
-        for (int availableTrain : availableTrainNumbers) {
-            g2.drawString(String.valueOf(availableTrain), x_pos + num, 90);
-            num += getFontMetrics(font).stringWidth(String.valueOf(availableTrain)) + 30;
-        }
+            g2.drawImage(train, x_pos, 90 - train.getHeight(null) + 2, null);
+            int num = train.getWidth(null) + 10;
+            for (int availableTrain : availableTrainNumbers) {
+                g2.drawString(String.valueOf(availableTrain), x_pos + num, 90);
+                num += getFontMetrics(font).stringWidth(String.valueOf(availableTrain)) + 30;
+            }
 
-        g2.setFont(font.deriveFont(25f));
-        g2.drawString(" Available Trains:", 0, 88);
+            g2.setFont(font.deriveFont(25f));
+            g2.drawString(" Available Trains:", 0, 88);
+        } else adminDisplay.drawInterface(g2);
 
         if (timeDepartureBool && display == 'R')
             dateTimeInterface.drawTimeInterface(g2, departureTime.getBounds().x + departureTime.getBounds().width / 2
