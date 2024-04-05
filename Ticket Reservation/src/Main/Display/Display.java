@@ -91,7 +91,7 @@ public class Display extends JPanel {
 
     public Display() {
 
-        display = 'S';
+        display = 'L';
         userClass = 'A';
         availableTrainNumbers = new int[]{10257, 10057, 55017, 79104, 10025, 99001, 47300, 45050, 80705, 60821, 56042};
         availableTrainNames = new String[]{"Belmond Royal Scotsman", "Shangri-La Express", "Kyushu Seven Star", "Maharajas Express",
@@ -534,9 +534,9 @@ public class Display extends JPanel {
                         if ((!emailField.getText().isBlank() && !String.valueOf(passwordField.getPassword()).isBlank())) {
                             if ((database.isEmail(emailField.getText()) || database.isUsername(emailField.getText())) &&
                                     database.isPassword(String.valueOf(passwordField.getPassword()))) {
-                                passwordClr = emailClr = new Color(0x2FCAA6);
                                 loginNullified();
                                 if (database.isTopUser()) {
+                                    passwordClr = emailClr = new Color(0x2FCAA6);
                                     display = 'R';
                                 } else {
                                     display = 'T';
@@ -559,12 +559,6 @@ public class Display extends JPanel {
                 }
 
                 if (display == 'R') {
-                    //logout
-                    if (loginBtn != null && loginBtn.getBounds().contains(e.getPoint())) {
-                        registerNullified();
-                        display = 'L';
-                        setCursor(Cursor.getDefaultCursor());
-                    }
                     //set controls for to departure time
                     if (departureTime != null && departureTime.getBounds().contains(e.getPoint())) {
                         timeDepartureBool = !timeDepartureBool;
@@ -772,9 +766,15 @@ public class Display extends JPanel {
                         if (toDestinationField != null && toDestinationField.getText().isBlank())
                             toDestinationClr = Color.RED;
                     }
+                    //logout
+                    if (loginBtn != null && loginBtn.getBounds().contains(e.getPoint())) {
+                        registerNullified();
+                        display = 'L';
+                        setCursor(Cursor.getDefaultCursor());
+                    }
                     //cancel reservation
                     if (booked != null && booked.getBounds().contains(e.getPoint())) {
-                        //check if PNR exist in database
+                        //check if PNR exist in database and remove
                         database.removeData(getParent());
                     }
                 }
@@ -832,25 +832,25 @@ public class Display extends JPanel {
         } catch (Exception ignored) {
         }
 
-        if (display == 'S') {
-            g2.drawImage(signUpBackgroundImg, 0, 0, null);
-            signUpDisplay(g2);
-        } else if (display == 'L') {
-            g2.drawImage(loginBackgroundImg, 0, 0, null);
-            loginDisplay(g2);
-        } else if (display == 'R') {
-            g2.drawImage(bookingBackground, 0, 0, null);
-            reservationDisplay(g2);
-        }
+        if (display == 'S' || display == 'L' || display == 'R') {
+            if (display == 'S') {
+                g2.drawImage(signUpBackgroundImg, 0, 0, null);
+                g2.setColor(new Color(0x12A3D2));
+                signUpDisplay(g2);
+            } else if (display == 'L') {
+                g2.drawImage(loginBackgroundImg, 0, 0, null);
+                g2.setColor(new Color(0xBE1B86));
+                loginDisplay(g2);
+            } else {
+                g2.drawImage(bookingBackground, 0, 0, null);
+                g2.setColor(Color.WHITE);
+                reservationDisplay(g2);
+            }
 
-        font = new Font("Book Antiqua", Font.BOLD | Font.ITALIC, 20);
-        g2.setFont(font);
+            font = new Font("Book Antiqua", Font.BOLD | Font.ITALIC, 20);
+            g2.setFont(font);
 
-        if (display == 'L') g2.setColor(new Color(0xBE1B86));
-        if (display == 'S') g2.setColor(new Color(0x12A3D2));
-        if (display == 'R') g2.setColor(Color.WHITE);
 
-        if (database.isTopUser()) {
             if (x_pos < g2.getFontMetrics(font.deriveFont(25f)).stringWidth(" Available Trains:") + 5
                     || x_pos > getBounds().width - 860 - train.getWidth(null))
                 animate = -animate;
@@ -865,17 +865,20 @@ public class Display extends JPanel {
 
             g2.setFont(font.deriveFont(25f));
             g2.drawString(" Available Trains:", 0, 88);
-        } else adminDisplay.drawInterface(g2);
 
-        if (timeDepartureBool && display == 'R')
-            dateTimeInterface.drawTimeInterface(g2, departureTime.getBounds().x + departureTime.getBounds().width / 2
-                    - dateTimeInterface.w / 2, (int) (departureTime.y - dateTimeInterface.h) - 10, hour, min);
+            if (timeDepartureBool && display == 'R')
+                dateTimeInterface.drawTimeInterface(g2, departureTime.getBounds().x + departureTime.getBounds().width / 2
+                        - dateTimeInterface.w / 2, (int) (departureTime.y - dateTimeInterface.h) - 10, hour, min);
 
-        if (dateDepartureBool && display == 'R')
-            dateTimeInterface.drawDateInterface(g2, departureDate.getBounds().x + departureDate.getBounds().width / 2
-                            - dateTimeInterface.w / 2, (int) (departureDate.y - dateTimeInterface.h) - 10,
-                    year, month, day);
+            if (dateDepartureBool && display == 'R')
+                dateTimeInterface.drawDateInterface(g2, departureDate.getBounds().x + departureDate.getBounds().width / 2
+                                - dateTimeInterface.w / 2, (int) (departureDate.y - dateTimeInterface.h) - 10,
+                        year, month, day);
 
+        }
+        if (display == 'T') {
+            adminDisplay.drawInterface(g2);
+        }
     }
 
     private void reservationDisplay(Graphics2D g2) {

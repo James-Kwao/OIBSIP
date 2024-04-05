@@ -32,12 +32,13 @@ public class DB {
                 //make the directory invisible
                 makeFileInvisible(file);
                 //create superuser account
-                String child = "admin@gmail.com" + delimiter + "admin" + delimiter + ".rdb";
+                String child = "admin@gmail.com" + delimiter + "admin";
                 file = new File(rootPath, child);
                 String newUser = "admin" + delimiter + "admin" + delimiter +
                         "admin@gmail.com" + delimiter + "admin123" + delimiter + "admin";
-                file.createNewFile();
-                fileWriter = new PrintWriter(new BufferedWriter(new FileWriter(file, true)), true);
+                file.mkdir();
+                userDetails = new File(file.getCanonicalFile().toString(), "user.detis");
+                fileWriter = new PrintWriter(new BufferedWriter(new FileWriter(userDetails, true)), true);
                 fileWriter.println(newUser);
                 fileWriter.close();
                 file = new File(rootPath);
@@ -54,7 +55,7 @@ public class DB {
 
     public int insert(String firstName, String lastName, String email, String password, String username) {
         id++;
-        String child = email + delimiter + username + delimiter + ".rdb";
+        String child = email + delimiter + username;
 
         File u = new File(rootPath, child);
         try {
@@ -66,7 +67,8 @@ public class DB {
                 bookings.createNewFile();
                 makeFileInvisible(bookings);
                 makeFileInvisible(userDetails);
-                String newUser = firstName + delimiter + lastName + delimiter + email + delimiter + password + delimiter + username;
+                String newUser = firstName + delimiter + lastName + delimiter + email + delimiter + password + delimiter
+                        + username + delimiter;
                 fileWriter = new PrintWriter(new BufferedWriter(new FileWriter(userDetails, true)), true);
                 fileWriter.println(newUser);
                 fileWriter.close();
@@ -89,44 +91,26 @@ public class DB {
             if (files != null)
                 for (File f : files) {
                     String[] data = f.getName().split(delimiter);
-                    if (data[0].equals(details) || data[1].equals(details)) {
-                        if (f.isDirectory())
-                            for (File nf : Objects.requireNonNull(f.listFiles())) {
-                                if (nf.getName().equals("user.detis")) {
-                                    userDetails = nf;
-                                    fileReader = new BufferedReader(new FileReader(nf));
-                                    String userInfo = fileReader.readLine();
-                                    data = userInfo.split(delimiter);
-                                    if (data[where].contains(details)) {
-                                        currentUser = nf;
-                                        firstName = data[0];
-                                        lastName = data[1];
-                                        email = data[2];
-                                        password = data[3];
-                                        username = data[4];
-                                        fileReader.close();
-                                        return true;
-                                    }
+                    if (data[0].matches(details) || data[1].matches(details)) {
+                        for (File nf : Objects.requireNonNull(f.listFiles())) {
+                            if (nf.getName().equals("user.detis")) {
+                                userDetails = nf;
+                                fileReader = new BufferedReader(new FileReader(nf));
+                                String userInfo = fileReader.readLine();
+                                data = userInfo.split(delimiter);
+                                if (data[where].matches(details)) {
+                                    currentUser = nf;
+                                    firstName = data[0];
+                                    lastName = data[1];
+                                    email = data[2];
+                                    password = data[3];
+                                    username = data[4];
                                     fileReader.close();
-                                    break;
-                                } else bookings = nf;
-                            }
-                        else {
-                            fileReader = new BufferedReader(new FileReader(f));
-                            String userInfo = fileReader.readLine();
-                            data = userInfo.split(delimiter);
-                            if (data[where].contains(details)) {
-                                currentUser = f;
-                                firstName = data[0];
-                                lastName = data[1];
-                                email = data[2];
-                                password = data[3];
-                                username = data[4];
-                                topUser = true;
+                                    return true;
+                                }
                                 fileReader.close();
-                                return true;
-                            }
-                            fileReader.close();
+                                break;
+                            } else bookings = nf;
                         }
                     }
                 }
@@ -214,7 +198,7 @@ public class DB {
     }
 
     public boolean isPassword(String pass) {
-        return pass.equals(password);
+        return pass.matches(password);
     }
 
     public boolean isUsername(String person) {
@@ -301,7 +285,9 @@ public class DB {
     }
 
     public boolean isTopUser() {
-        return !topUser;
+        if (email.equals("Null") || username.equals("Null")) return true;
+        return (!email.matches("admin@gmail.com") || !username.matches("admin")) &&
+                !isPassword(password);
     }
 
     private JTextArea displayPNRInfo(String s) {
