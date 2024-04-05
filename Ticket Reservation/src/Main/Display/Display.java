@@ -85,7 +85,7 @@ public class Display extends JPanel {
             hour, min, year, month, day;
     private JPasswordField passwordField, confirmPasswordField;
     private char display, userClass;
-    private String dateToDepart, timeToDepart, trainName, PNR;
+    private String dateToDepart, timeToDepart, trainName;
     private int mouseX, mouseY, animate, x_pos;
     private Rectangle2D.Float toggleRec, rememberMeBound;
 
@@ -536,11 +536,11 @@ public class Display extends JPanel {
                                     database.isPassword(String.valueOf(passwordField.getPassword()))) {
                                 loginNullified();
                                 if (database.isTopUser()) {
-                                    passwordClr = emailClr = new Color(0x2FCAA6);
-                                    display = 'R';
-                                } else {
                                     display = 'T';
                                     setCursor(Cursor.getDefaultCursor());
+                                } else {
+                                    passwordClr = emailClr = new Color(0x2FCAA6);
+                                    display = 'R';
                                 }
                             } else {
                                 emailClr = Color.RED;
@@ -778,6 +778,11 @@ public class Display extends JPanel {
                         database.removeData(getParent());
                     }
                 }
+
+                if (display == 'T') {
+                    adminDisplay.mouseClicked(e);
+                    display = adminDisplay.getDisplay();
+                }
             }
 
             @Override
@@ -797,6 +802,8 @@ public class Display extends JPanel {
 
                 if (rememberMeBound != null && rememberMeBound.getBounds().contains(e.getPoint()))
                     toggleClr = toggleClr.darker().darker();
+
+                if (display == 'T') adminDisplay.mousePressed(e);
             }
 
             @Override
@@ -814,6 +821,8 @@ public class Display extends JPanel {
                             new Color(0x8E9294) : new Color(0x2FCAA6);
                 } else if (display == 'R') {
                     buttonColor = Color.WHITE;
+                } else {
+                    adminDisplay.mouseReleased(e);
                 }
             }
         });
@@ -877,7 +886,7 @@ public class Display extends JPanel {
 
         }
         if (display == 'T') {
-            adminDisplay.drawInterface(g2);
+            adminDisplay.drawInterface(g2, new Point(mouseX, mouseY));
         }
     }
 
