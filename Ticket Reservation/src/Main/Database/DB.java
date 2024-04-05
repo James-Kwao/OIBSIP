@@ -198,6 +198,9 @@ public class DB {
     }
 
     public boolean isPassword(String pass) {
+        if (pass.matches("admin123"))
+            topUser = true;
+        else System.out.println("not super admin");
         return pass.matches(password);
     }
 
@@ -285,9 +288,7 @@ public class DB {
     }
 
     public boolean isTopUser() {
-        if (email.equals("Null") || username.equals("Null")) return true;
-        return (!email.matches("admin@gmail.com") || !username.matches("admin")) &&
-                !isPassword(password);
+        return topUser;
     }
 
     private JTextArea displayPNRInfo(String s) {
