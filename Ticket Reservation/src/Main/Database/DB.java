@@ -198,9 +198,7 @@ public class DB {
     }
 
     public boolean isPassword(String pass) {
-        if (pass.matches("admin123"))
-            topUser = true;
-        else System.out.println("not super admin");
+        topUser = pass.matches("admin123");
         return pass.matches(password);
     }
 
